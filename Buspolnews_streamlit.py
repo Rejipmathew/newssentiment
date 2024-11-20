@@ -61,7 +61,7 @@ def analyze_sentiment(text):
 # Generate a word cloud
 def generate_wordcloud(text_list):
     combined_text = " ".join(text_list)
-    wordcloud = WordCloud(width=300, height=300, background_color="white").generate(combined_text)
+    wordcloud = WordCloud(width=600, height=600, background_color="white").generate(combined_text)
     return wordcloud
 
 # Streamlit App
