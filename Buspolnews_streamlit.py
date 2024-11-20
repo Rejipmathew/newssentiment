@@ -60,7 +60,7 @@ def generate_wordcloud(text_list):
     return wordcloud
 
 # Streamlit App
-st.title("News Search & Sentiment Analysis")
+st.title(" News Feed Sentiment Analysis-RSS Feeds")
 
 st.sidebar.header("News Source Selection")
 rss_feeds = {
