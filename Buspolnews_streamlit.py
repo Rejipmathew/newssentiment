@@ -27,7 +27,7 @@ st.markdown("""
 
         /* Table text color */
         table {
-            color: Orange;
+            color: yellow;
         }
 
         /* Links */
