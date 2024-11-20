@@ -22,12 +22,12 @@ st.markdown("""
 
         /* Header styling */
         h1, h2, h3 {
-            color: orange;
+            color: navyblue;
         }
 
         /* Table text color */
         table {
-            color: yellow;
+            color: Orange;
         }
 
         /* Links */
