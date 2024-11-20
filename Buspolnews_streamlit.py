@@ -22,7 +22,7 @@ st.markdown("""
 
         /* Header styling */
         h1, h2, h3 {
-            color: darkblue;
+            color: orange;
         }
 
         /* Table text color */
