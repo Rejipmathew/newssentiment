@@ -32,8 +32,25 @@ def generate_wordcloud(text_list):
     wordcloud = WordCloud(width=300, height=300, background_color="white").generate(combined_text)
     return wordcloud
 
+# Set app background
+def set_background(image_path):
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background: url({image_path});
+            background-size: cover;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
 # Streamlit App
 st.title("News Search & Sentiment Analysis")
+
+# Add background image
+set_background("https://www.example.com/background-image.jpg")  # Replace with your image URL or local path
 
 st.sidebar.header("News Source Selection")
 rss_feeds = {
@@ -46,24 +63,29 @@ rss_feeds = {
     "CNN: Latest News": "http://rss.cnn.com/rss/edition.rss",
     "CNBC: Latest News": "https://www.cnbc.com/id/100003114/device/rss/rss.html",
     "Investing News": "https://www.investing.com/rss/news.rss",
-    
-    
 }
+
 selected_feed_name = st.sidebar.radio("Select an RSS feed", list(rss_feeds.keys()))
 news_url = rss_feeds[selected_feed_name]
+
+# Fetch news and prepare autocomplete dictionary
+news_data = fetch_news(news_url)
+autocomplete_dict = [news["title"] for news in news_data]
 
 st.sidebar.subheader("Search News")
 search_query = st.sidebar.text_input("Enter topic or keyword", "")
 
-# Fetch news from selected RSS feed
-news_data = fetch_news(news_url)
+# Autocomplete feature
+st.sidebar.text("Autocomplete Suggestions:")
+suggestions = [word for word in autocomplete_dict if search_query.lower() in word.lower()]
+st.sidebar.write(suggestions[:5])  # Display top 5 suggestions
 
 # Word cloud and Sentiment Analysis Table
 if news_data:
     # Generate Word Cloud
     titles = [news["title"] for news in news_data]
     wordcloud = generate_wordcloud(titles)
-    
+
     # Display Word Cloud in the Sidebar
     st.sidebar.subheader("Word Cloud")
     fig, ax = plt.subplots(figsize=(3, 3))
@@ -101,7 +123,7 @@ if news_data:
     else:
         st.write("All News Articles:")
         filtered_df = pd.DataFrame(sentiment_table)
-    
+
     if not filtered_df.empty:
         for _, row in filtered_df.iterrows():
             st.subheader(row["Title"])
