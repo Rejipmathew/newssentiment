@@ -1,9 +1,16 @@
 import streamlit as st
 import feedparser
-from textblob import TextBlob
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import pandas as pd
+import nltk
+
+# Download necessary NLTK data
+nltk.download("vader_lexicon")
+
+# Initialize the sentiment analyzer
+sid = SentimentIntensityAnalyzer()
 
 # Function to fetch news from RSS feed
 def fetch_news(feed_url):
@@ -16,15 +23,15 @@ def fetch_news(feed_url):
 
 # Function to perform sentiment analysis
 def analyze_sentiment(text):
-    analysis = TextBlob(text)
-    polarity = analysis.sentiment.polarity
-    if polarity > 0:
+    scores = sid.polarity_scores(text)
+    compound_score = scores["compound"]
+    if compound_score > 0:
         sentiment = "Positive"
-    elif polarity < 0:
+    elif compound_score < 0:
         sentiment = "Negative"
     else:
         sentiment = "Neutral"
-    return sentiment, polarity
+    return sentiment, compound_score
 
 # Generate a word cloud
 def generate_wordcloud(text_list):
@@ -46,8 +53,6 @@ rss_feeds = {
     "CNN: Latest News": "http://rss.cnn.com/rss/edition.rss",
     "CNBC: Latest News": "https://www.cnbc.com/id/100003114/device/rss/rss.html",
     "Investing News": "https://www.investing.com/rss/news.rss",
-    
-    
 }
 selected_feed_name = st.sidebar.radio("Select an RSS feed", list(rss_feeds.keys()))
 news_url = rss_feeds[selected_feed_name]
@@ -76,11 +81,11 @@ if news_data:
     sentiment_counts = {"Positive": 0, "Negative": 0, "Neutral": 0}
 
     for news in news_data:
-        sentiment, polarity = analyze_sentiment(news["title"])
+        sentiment, compound_score = analyze_sentiment(news["title"])
         sentiment_table.append({
             "Title": news["title"],
             "Sentiment": sentiment,
-            "Polarity": round(polarity, 2),
+            "Compound Score": round(compound_score, 2),
             "Link": news["link"]
         })
         sentiment_counts[sentiment] += 1
@@ -106,7 +111,7 @@ if news_data:
         for _, row in filtered_df.iterrows():
             st.subheader(row["Title"])
             st.markdown(f"[Read More]({row['Link']})")
-            st.write(f"**Sentiment:** {row['Sentiment']} ({row['Polarity']:.2f})")
+            st.write(f"**Sentiment:** {row['Sentiment']} ({row['Compound Score']:.2f})")
             st.write("---")
 
         st.write("### Sentiment Analysis Table")
