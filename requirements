@@ -1,6 +1,8 @@
-streamlit==1.40.1
+streamlit==1.40.0
 feedparser==6.0.11
-textblob
-wordcloud
-matplotlib
-pandas
+wordcloud==1.9.4
+matplotlib==3.8.0
+pandas==2.1.1
+textblob==0.18.0.post0
+
+
