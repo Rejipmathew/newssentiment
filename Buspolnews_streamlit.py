@@ -10,7 +10,7 @@ st.markdown("""
     <style>
         /* Main background and text styling */
         .stApp {
-            background-color: lightblue;
+            background-color: white;
             color: darkblue;
         }
 
@@ -22,6 +22,11 @@ st.markdown("""
 
         /* Header styling */
         h1, h2, h3 {
+            color: darkblue;
+        }
+
+        /* Table text color */
+        table {
             color: darkblue;
         }
 
@@ -110,7 +115,15 @@ with right_sidebar:
             {"Sentiment": ["Positive", "Negative", "Neutral"], 
              "Count": [sentiment_counts["Positive"], sentiment_counts["Negative"], sentiment_counts["Neutral"]]}
         )
-        st.table(sentiment_df)
+
+        # Apply dark blue text to the table using markdown
+        sentiment_html = sentiment_df.to_html(index=False)
+        sentiment_html = f"""
+        <div style="color: darkblue; font-size: 14px;">
+            {sentiment_html}
+        </div>
+        """
+        st.markdown(sentiment_html, unsafe_allow_html=True)
 
         # Generate Word Cloud
         titles = [news["title"] for news in news_data]
