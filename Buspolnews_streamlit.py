@@ -11,7 +11,7 @@ st.markdown("""
         /* Main background and text styling */
         .stApp {
             background-color: white;
-            color: darkblue;
+            color: white;
         }
         
         /* Sidebar background and text styling */
