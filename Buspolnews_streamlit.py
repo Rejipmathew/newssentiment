@@ -10,7 +10,7 @@ st.markdown("""
     <style>
         /* Main background and text styling */
         .stApp {
-            background-color: white;
+            background-color: lightblue;
             color: darkblue;
         }
 
@@ -27,7 +27,7 @@ st.markdown("""
 
         /* Table text color */
         table {
-            color: darkblue;
+            color: yellow;
         }
 
         /* Links */
