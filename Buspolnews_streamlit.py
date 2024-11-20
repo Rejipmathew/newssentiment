@@ -10,13 +10,13 @@ st.markdown("""
     <style>
         /* Main background and text styling */
         .stApp {
-            background-color: frenchgrey;
+            background-color: lightgrey;
             color: darkblue;
         }
 
         /* Sidebar background styling */
         .css-1d391kg {
-            background-color: lightgreen;
+            background-color: lightgrey;
             color: darkblue;
         }
 
