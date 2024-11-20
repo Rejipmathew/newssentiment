@@ -5,6 +5,33 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import pandas as pd
 
+# Custom CSS for styling
+st.markdown("""
+    <style>
+        /* Main background and text styling */
+        .stApp {
+            background-color: white;
+            color: darkblue;
+        }
+        
+        /* Sidebar background and text styling */
+        .css-1d391kg {
+            background-color: white;
+            color: darkblue;
+        }
+        
+        /* Sidebar header */
+        .css-1v3fvcr h1, .css-1d391kg h2, .css-1d391kg h3 {
+            color: darkblue;
+        }
+        
+        /* Links */
+        a {
+            color: darkblue;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 # Function to fetch news from RSS feed
 def fetch_news(feed_url):
     news_feed = feedparser.parse(feed_url)
@@ -46,8 +73,6 @@ rss_feeds = {
     "CNN: Latest News": "http://rss.cnn.com/rss/edition.rss",
     "CNBC: Latest News": "https://www.cnbc.com/id/100003114/device/rss/rss.html",
     "Investing News": "https://www.investing.com/rss/news.rss",
-    
-    
 }
 selected_feed_name = st.sidebar.radio("Select an RSS feed", list(rss_feeds.keys()))
 news_url = rss_feeds[selected_feed_name]
