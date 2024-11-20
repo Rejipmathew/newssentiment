@@ -17,12 +17,12 @@ st.markdown("""
         /* Sidebar background and text styling */
         .css-1d391kg {
             background-color: lightgreen;
-            color: darkblue;
+            color: orange;
         }
         
         /* Sidebar header */
         .css-1v3fvcr h1, .css-1d391kg h2, .css-1d391kg h3 {
-            color: darkblue;
+            color: white;
         }
         
         /* Links */
