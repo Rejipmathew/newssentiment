@@ -10,21 +10,21 @@ st.markdown("""
     <style>
         /* Main background and text styling */
         .stApp {
-            background-color: darkblue;
-            color: white;
+            background-color: white;
+            color: darkblue;
         }
-        
-        /* Sidebar background and text styling */
+
+        /* Sidebar background styling */
         .css-1d391kg {
             background-color: lightgreen;
-            color: orange;
+            color: darkblue;
         }
-        
-        /* Sidebar header */
-        .css-1v3fvcr h1, .css-1d391kg h2, .css-1d391kg h3 {
-            color: white;
+
+        /* Header styling */
+        h1, h2, h3 {
+            color: darkblue;
         }
-        
+
         /* Links */
         a {
             color: darkblue;
@@ -60,11 +60,9 @@ def generate_wordcloud(text_list):
     return wordcloud
 
 # Streamlit App
-st.title(" News Feed Sentiment Analysis-RSS Feeds")
+st.title("News Search & Sentiment Analysis")
 
-st.sidebar.subheader("Search News")
-search_query = st.sidebar.text_input("Enter topic or keyword", "")
-
+# Left Sidebar
 st.sidebar.header("News Source Selection")
 rss_feeds = {
     "NPR: Business News": "http://www.npr.org/rss/rss.php?id=1014",
@@ -80,63 +78,71 @@ rss_feeds = {
 selected_feed_name = st.sidebar.radio("Select an RSS feed", list(rss_feeds.keys()))
 news_url = rss_feeds[selected_feed_name]
 
+st.sidebar.subheader("Search News")
+search_query = st.sidebar.text_input("Enter topic or keyword", "")
+
+# Layout: Main Content and Right Sidebar
+main_content, right_sidebar = st.columns([3, 1])
+
 # Fetch news from selected RSS feed
 news_data = fetch_news(news_url)
 
-# Word cloud and Sentiment Analysis Table
-if news_data:
-    # Generate Word Cloud
-    titles = [news["title"] for news in news_data]
-    wordcloud = generate_wordcloud(titles)
-    
-    # Display Word Cloud in the Sidebar
-    st.sidebar.subheader("Word Cloud")
-    fig, ax = plt.subplots(figsize=(3, 3))
-    ax.imshow(wordcloud, interpolation="bilinear")
-    ax.axis("off")
-    st.sidebar.pyplot(fig)
+# Right Sidebar for Sentiment Summary and Word Cloud
+with right_sidebar:
+    if news_data:
+        # Sentiment Analysis Table
+        sentiment_table = []
+        sentiment_counts = {"Positive": 0, "Negative": 0, "Neutral": 0}
 
-    # Sentiment Analysis Table
-    sentiment_table = []
-    sentiment_counts = {"Positive": 0, "Negative": 0, "Neutral": 0}
+        for news in news_data:
+            sentiment, polarity = analyze_sentiment(news["title"])
+            sentiment_table.append({
+                "Title": news["title"],
+                "Sentiment": sentiment,
+                "Polarity": round(polarity, 2),
+                "Link": news["link"]
+            })
+            sentiment_counts[sentiment] += 1
 
-    for news in news_data:
-        sentiment, polarity = analyze_sentiment(news["title"])
-        sentiment_table.append({
-            "Title": news["title"],
-            "Sentiment": sentiment,
-            "Polarity": round(polarity, 2),
-            "Link": news["link"]
-        })
-        sentiment_counts[sentiment] += 1
+        # Display Sentiment Counts
+        st.subheader("Sentiment Summary")
+        sentiment_df = pd.DataFrame(
+            {"Sentiment": ["Positive", "Negative", "Neutral"], 
+             "Count": [sentiment_counts["Positive"], sentiment_counts["Negative"], sentiment_counts["Neutral"]]}
+        )
+        st.table(sentiment_df)
 
-    # Display Sentiment Counts in Sidebar
-    st.sidebar.subheader("Sentiment Summary")
-    sentiment_df = pd.DataFrame(
-        {"Sentiment": ["Positive", "Negative", "Neutral"], 
-         "Count": [sentiment_counts["Positive"], sentiment_counts["Negative"], sentiment_counts["Neutral"]]}
-    )
-    st.sidebar.table(sentiment_df)
+        # Generate Word Cloud
+        titles = [news["title"] for news in news_data]
+        wordcloud = generate_wordcloud(titles)
+        st.subheader("Word Cloud")
+        fig, ax = plt.subplots(figsize=(3, 3))
+        ax.imshow(wordcloud, interpolation="bilinear")
+        ax.axis("off")
+        st.pyplot(fig)
 
-    # Filter news based on user search
-    if search_query:
-        st.write(f"Results for: **{search_query}**")
-        filtered_table = [row for row in sentiment_table if search_query.lower() in row["Title"].lower()]
-        filtered_df = pd.DataFrame(filtered_table)
+# Main Content
+with main_content:
+    if news_data:
+        # Filter news based on user search
+        if search_query:
+            st.write(f"Results for: **{search_query}**")
+            filtered_table = [row for row in sentiment_table if search_query.lower() in row["Title"].lower()]
+            filtered_df = pd.DataFrame(filtered_table)
+        else:
+            st.write("All News Articles:")
+            filtered_df = pd.DataFrame(sentiment_table)
+
+        if not filtered_df.empty:
+            for _, row in filtered_df.iterrows():
+                st.subheader(row["Title"])
+                st.markdown(f"[Read More]({row['Link']})")
+                st.write(f"**Sentiment:** {row['Sentiment']} ({row['Polarity']:.2f})")
+                st.write("---")
+
+            st.write("### Sentiment Analysis Table")
+            st.dataframe(filtered_df.drop(columns=["Link"]))
+        else:
+            st.write("No news articles found.")
     else:
-        st.write("All News Articles:")
-        filtered_df = pd.DataFrame(sentiment_table)
-    
-    if not filtered_df.empty:
-        for _, row in filtered_df.iterrows():
-            st.subheader(row["Title"])
-            st.markdown(f"[Read More]({row['Link']})")
-            st.write(f"**Sentiment:** {row['Sentiment']} ({row['Polarity']:.2f})")
-            st.write("---")
-
-        st.write("### Sentiment Analysis Table")
-        st.dataframe(filtered_df.drop(columns=["Link"]))
-    else:
-        st.write("No news articles found.")
-else:
-    st.write("No news data available.")
+        st.write("No news data available.")
