@@ -16,7 +16,7 @@ st.markdown("""
         
         /* Sidebar background and text styling */
         .css-1d391kg {
-            background-color: white;
+            background-color: lightgreen;
             color: darkblue;
         }
         
