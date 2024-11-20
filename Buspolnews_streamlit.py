@@ -62,6 +62,9 @@ def generate_wordcloud(text_list):
 # Streamlit App
 st.title(" News Feed Sentiment Analysis-RSS Feeds")
 
+st.sidebar.subheader("Search News")
+search_query = st.sidebar.text_input("Enter topic or keyword", "")
+
 st.sidebar.header("News Source Selection")
 rss_feeds = {
     "NPR: Business News": "http://www.npr.org/rss/rss.php?id=1014",
@@ -76,9 +79,6 @@ rss_feeds = {
 }
 selected_feed_name = st.sidebar.radio("Select an RSS feed", list(rss_feeds.keys()))
 news_url = rss_feeds[selected_feed_name]
-
-st.sidebar.subheader("Search News")
-search_query = st.sidebar.text_input("Enter topic or keyword", "")
 
 # Fetch news from selected RSS feed
 news_data = fetch_news(news_url)
