@@ -50,7 +50,7 @@ def set_background(image_path):
 st.title("News Search & Sentiment Analysis")
 
 # Add background image
-set_background("https://www.example.com/background-image.jpg")  # Replace with your image URL or local path
+set_background("https://github.com/Rejipmathew/newssentiment/blob/main/newsimage.png")  # Replace with your image URL or local path
 
 st.sidebar.header("News Source Selection")
 rss_feeds = {
